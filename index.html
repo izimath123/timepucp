@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Control de Tiempo de Evaluación</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+    <header>
+        <div class="config">
+            <div class="hora-input">
+                 <label>Hora Inicio</label>
+                 <div class="time-wrapper">
+                    <input type="time" id="horaInicio">
+                 </div>
+                 <small>Haz clic en el reloj para elegir la hora</small>
+            </div>
+
+        <div class="hora-input">
+            <label>Hora Fin</label>
+            <div class="time-wrapper">
+                <input type="time" id="horaFin">
+            </div>
+            <small>Haz clic en el reloj para elegir la hora</small>
+        </div>
+
+            <div class="tiempo-restante">
+                Tiempo Restante:
+                <span id="contador">00:00:00</span>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="hora-actual" id="horaActual">
+            --:--:--
+        </div>
+
+        <div class="barra-container">
+            <div class="barra-progreso" id="barraProgreso"></div>
+        </div>
+
+        <div class="info">
+            <!-- Fila 1 -->
+            <div class="fila fila-1">
+                <div class="campo">
+                    <label>Curso:</label>
+                    <input type="text" placeholder="Curso" id="curso">
+                </div>
+
+                <div class="campo">
+                    <label>Evaluación:</label>
+                    <input type="text" placeholder="Evaluación" id="evaluacion">
+                </div>
+            </div>
+
+            <!-- Fila 2 -->
+            <div class="fila fila-2">
+                <div class="campo">
+                    <label>Profesor:</label>
+                    <input type="text" placeholder="Profesor" id="profesor">
+                </div>
+
+                <div class="campo">
+                    <label>Horario:</label>
+                    <input type="text" placeholder="Aula / Horario" id="aula">
+                </div>
+
+                <div class="campo">
+                    <label>Fecha:</label>
+
+                    <!-- Input visible -->
+                    <input type="text"
+                        id="fechaTexto"
+                        placeholder="dd/mm/yyyy"
+                        readonly>
+
+                    <!-- Input real con calendario -->
+                    <input type="date"
+                        id="fecha"
+                        style="position:absolute; opacity:0; pointer-events:none;">
+                </div>
+
+                <div class="campo campo-fullscreen">
+                    <button id="btnFullscreen" title="Pantalla completa">
+                        ⛶ Pantalla completa
+                    </button>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </main>
+
+    <script src="js/timer.js"></script>
+</body>
+</html>
