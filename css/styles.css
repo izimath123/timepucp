@@ -299,3 +299,18 @@ body.dark label {
         font-size: 26px;
     }
 }
+
+.titulo-app {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 32px;
+    font-weight: bold;
+    padding: 10px 40px;
+}
+
+.titulo-app img {
+    width: 40px;
+    height: 40px;
+}
+
