@@ -24,48 +24,54 @@ header {
 
 .config {
     display: grid;
-    grid-template-columns: 1fr 1fr auto;
-    align-items: end;
-    gap: 40px;
+    grid-template-columns: auto auto 1fr;
+    align-items: center;
+    gap: 60px;
 }
+
 
 /* =========================
    INPUTS HORA INICIO / FIN
 ========================= */
+
 .hora-input {
     display: flex;
-    flex-direction: column;
-    gap: 6px;
+    align-items: center;
+    gap: 14px;
 }
 
 .hora-input label {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: bold;
+    white-space: nowrap;
 }
 
 .hora-input input[type="time"] {
-    font-size: 22px;
+    font-size: 26px;
     padding: 10px 18px;
     width: 200px;
-    letter-spacing: 1px;
-    cursor: pointer;
 }
+
 
 .hora-input small {
     font-size: 12px;
     color: #666;
+    /* display: none;*/
 }
 
 /* =========================
    TIEMPO RESTANTE
 ========================= */
+
 .tiempo-restante {
     font-size: 28px;
     font-weight: bold;
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
+    justify-self: end;
 }
+
 
 #contador {
     background: #000;
@@ -197,4 +203,61 @@ main {
 
 #btnFullscreen:hover {
     background: #000;
+}
+
+.acciones {
+    display: flex;
+    gap: 16px;
+    margin-top: 12px;
+}
+
+#btnDarkMode {
+    font-size: 20px;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+}
+
+#btnDarkMode:hover {
+    background: #000;
+}
+
+/* =========================
+   MODO OSCURO
+========================= */
+body.dark {
+    background: #121212;
+    color: #f0f0f0;
+}
+
+body.dark header {
+    background: #1e1e1e;
+    border-bottom-color: #444;
+}
+
+body.dark input {
+    background: #1f1f1f;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+body.dark .barra-container {
+    background: #222;
+    border-color: #555;
+}
+
+body.dark .barra-progreso {
+    background: #ff5252;
+}
+
+body.dark #contador {
+    background: #000;
+    color: #00ffcc;
+}
+
+body.dark label {
+    color: #f0f0f0;
 }

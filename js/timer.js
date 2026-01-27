@@ -99,3 +99,21 @@ document.addEventListener("fullscreenchange", () => {
     }
 });
 
+const btnDarkMode = document.getElementById("btnDarkMode");
+
+// Cargar preferencia guardada
+if (localStorage.getItem("darkMode") === "true") {
+    document.body.classList.add("dark");
+    btnDarkMode.textContent = "☀️ Modo claro";
+}
+
+btnDarkMode.addEventListener("click", () => {
+    document.body.classList.toggle("dark");
+
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem("darkMode", isDark);
+
+    btnDarkMode.textContent = isDark
+        ? "☀️ Modo claro"
+        : "🌙 Modo oscuro";
+});
