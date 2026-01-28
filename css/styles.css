@@ -12,12 +12,12 @@ html, body {
 }
 
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: 'Inter', Arial, Helvetica, sans-serif;
     background: #f5f5f5;
     margin: 0;
     padding: 0;
-    overflow-x: hidden;
 }
+
 
 /* =========================
    HEADER SUPERIOR
@@ -90,6 +90,7 @@ header {
     letter-spacing: 1px;
 }
 
+
 /* =========================
    CONTENIDO PRINCIPAL
 ========================= */
@@ -107,6 +108,7 @@ main {
    HORA ACTUAL (CENTRAL)
 ========================= */
 
+/*
 .hora-actual {
     text-align: center;
     font-size: clamp(110px, 15vw, 200px);
@@ -114,6 +116,16 @@ main {
     margin: 20px 0 20px 0;
     line-height: 1.05;
 }
+*/
+
+.hora-actual {
+    text-align: center;
+    font-size: clamp(120px, 15vw, 220px);
+    font-weight: 900; /* 🔥 clave */
+    margin: 20px 0 20px 0;
+    line-height: 1;
+}
+
 
 
 
@@ -190,17 +202,32 @@ main {
     gap: 12px;
 }
 
+/*
 .campo label {
     font-size: 32px;
     font-weight: bold;
     white-space: nowrap;
 }
+*/    
 
+.campo label {
+    font-size: 30px;
+    font-weight: 800;
+}
+
+/*
 .campo input {
     flex: 1;
     padding: 12px 16px;
     font-size: 32px;
 }
+*/
+
+.campo input {
+    font-size: 28px;
+    font-weight: 600;
+}
+
 
 /* =========================
    FECHA
