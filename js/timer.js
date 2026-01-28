@@ -4,7 +4,6 @@ const horaFinInput = document.getElementById("horaFin");
 let intervaloCuenta;
 let tiempoTotal = 0;
 
-
 const horaActualEl = document.getElementById("horaActual");
 const contadorEl = document.getElementById("contador");
 const barraEl = document.getElementById("barraProgreso");
@@ -12,11 +11,29 @@ const barraEl = document.getElementById("barraProgreso");
 function iniciarCuentaRegresiva() {
     clearInterval(intervaloCuenta);
 
-    const ahora = new Date();
-    const hoy = ahora.toISOString().split("T")[0];
+    if (!horaInicioInput.value || !horaFinInput.value) {
+        contadorEl.textContent = "00:00:00";
+        barraEl.style.width = "0%";
+        return;
+    }
 
-    const inicio = new Date(`${hoy}T${horaInicioInput.value}`);
-    const fin = new Date(`${hoy}T${horaFinInput.value}`);
+    const ahora = new Date();
+
+    // ✅ FECHA LOCAL (SIN UTC)
+    const hoy = new Date(
+        ahora.getFullYear(),
+        ahora.getMonth(),
+        ahora.getDate()
+    );
+
+    const [hIni, mIni] = horaInicioInput.value.split(":");
+    const [hFin, mFin] = horaFinInput.value.split(":");
+
+    const inicio = new Date(hoy);
+    inicio.setHours(hIni, mIni, 0, 0);
+
+    const fin = new Date(hoy);
+    fin.setHours(hFin, mFin, 0, 0);
 
     if (fin <= inicio) {
         contadorEl.textContent = "00:00:00";
@@ -48,38 +65,44 @@ function iniciarCuentaRegresiva() {
     }, 1000);
 }
 
-
-let intervaloHora;
-let intervaloTimer;
-
+// =======================
+// HORA ACTUAL
+// =======================
 function actualizarHoraActual() {
     const ahora = new Date();
-    horaActualEl.textContent = ahora.toLocaleTimeString();
+    horaActualEl.textContent = ahora.toLocaleTimeString("es-PE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true
+    });
 }
 
-intervaloHora = setInterval(actualizarHoraActual, 1000);
+setInterval(actualizarHoraActual, 1000);
 actualizarHoraActual();
 
 horaInicioInput.addEventListener("change", iniciarCuentaRegresiva);
 horaFinInput.addEventListener("change", iniciarCuentaRegresiva);
 
+// =======================
+// FECHA
+// =======================
 const fechaInput = document.getElementById("fecha");
 const fechaTexto = document.getElementById("fechaTexto");
 
-/* Al hacer clic en el campo visible → abre calendario */
 fechaTexto.addEventListener("click", () => {
     fechaInput.showPicker();
 });
 
-/* Al elegir fecha en el calendario */
 fechaInput.addEventListener("change", () => {
-    const valor = fechaInput.value; // yyyy-mm-dd
-    if (!valor) return;
-
-    const [anio, mes, dia] = valor.split("-");
+    if (!fechaInput.value) return;
+    const [anio, mes, dia] = fechaInput.value.split("-");
     fechaTexto.value = `${dia}/${mes}/${anio}`;
 });
 
+// =======================
+// FULLSCREEN
+// =======================
 const btnFullscreen = document.getElementById("btnFullscreen");
 
 btnFullscreen.addEventListener("click", () => {
@@ -92,16 +115,17 @@ btnFullscreen.addEventListener("click", () => {
     }
 });
 
-/* Detectar salida por ESC */
 document.addEventListener("fullscreenchange", () => {
     if (!document.fullscreenElement) {
         btnFullscreen.textContent = "⛶ Pantalla completa";
     }
 });
 
+// =======================
+// MODO OSCURO
+// =======================
 const btnDarkMode = document.getElementById("btnDarkMode");
 
-// Cargar preferencia guardada
 if (localStorage.getItem("darkMode") === "true") {
     document.body.classList.add("dark");
     btnDarkMode.textContent = "☀️ Modo claro";
