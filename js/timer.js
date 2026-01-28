@@ -8,6 +8,9 @@ const horaActualEl = document.getElementById("horaActual");
 const contadorEl = document.getElementById("contador");
 const barraEl = document.getElementById("barraProgreso");
 
+// =======================
+// CUENTA REGRESIVA (FIX TOTAL)
+// =======================
 function iniciarCuentaRegresiva() {
     clearInterval(intervaloCuenta);
 
@@ -19,7 +22,6 @@ function iniciarCuentaRegresiva() {
 
     const ahora = new Date();
 
-    // ✅ FECHA LOCAL (SIN UTC)
     const hoy = new Date(
         ahora.getFullYear(),
         ahora.getMonth(),
@@ -35,10 +37,9 @@ function iniciarCuentaRegresiva() {
     const fin = new Date(hoy);
     fin.setHours(hFin, mFin, 0, 0);
 
+    // ✅ SOPORTE MEDIANOCHE
     if (fin <= inicio) {
-        contadorEl.textContent = "00:00:00";
-        barraEl.style.width = "0%";
-        return;
+        fin.setDate(fin.getDate() + 1);
     }
 
     tiempoTotal = fin - inicio;
