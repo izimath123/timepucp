@@ -108,25 +108,25 @@ main {
    HORA ACTUAL (CENTRAL)
 ========================= */
 
-/*
-.hora-actual {
-    text-align: center;
-    font-size: clamp(110px, 15vw, 200px);
-    font-weight: 800;
-    margin: 20px 0 20px 0;
-    line-height: 1.05;
-}
-*/
-
 .hora-actual {
     text-align: center;
     font-size: clamp(120px, 15vw, 220px);
-    font-weight: 900; /* 🔥 clave */
-    margin: 20px 0 20px 0;
+    font-weight: 900;
+    margin: 20px 0;
     line-height: 1;
+
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    max-width: 100vw;
+    overflow: hidden;
+    letter-spacing: -0.02em;
 }
 
-
+.hora-actual::after {
+    display: inline-block;
+    width: 2.2ch; /* ancho fijo */
+    text-align: left;
+}
 
 
 /* =========================
@@ -340,4 +340,3 @@ body.dark label {
     width: 40px;
     height: 40px;
 }
-
