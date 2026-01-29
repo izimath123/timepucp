@@ -1,10 +1,13 @@
 /* =========================
    RESET BÁSICO
 ========================= */
+
 html, body {
     height: 100%;
-    overflow: hidden; /* evita scroll */
+    overflow-x: hidden;
+    overflow-y: auto;   /* ✅ permite scroll solo si hace falta */
 }
+
 
 
 * {
@@ -151,25 +154,6 @@ main {
    HORA ACTUAL (CENTRAL)
 ========================= */
 
-/*
-.hora-actual {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    font-family: 'Arial Black', Arial, sans-serif;
-    font-size: clamp(100px, 12vw, 190px); 
-    font-weight: 900;
-
-    line-height: 1;
-    margin: 10px 0;
-
-    max-width: 100%;
-    overflow: hidden;
-    white-space: nowrap;
-}
-*/
-
 main {
     width: 100%;   /* agregado */
 }
@@ -181,7 +165,7 @@ main {
     align-items: center;
 
     width: 100%;
-    margin-left: calc(50% - 50vw); /* agregado */
+    /* margin-left: calc(50% - 50vw);  agregado */
     overflow: hidden;
 
     font-size: clamp(110px, 14vw, 200px);
