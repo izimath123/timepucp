@@ -78,7 +78,7 @@ header {
     justify-self: end;
 }
 
-
+/*
 #contador {
     background: #000;
     color: #fff;
@@ -88,6 +88,28 @@ header {
     min-width: 180px;
     text-align: center;
     letter-spacing: 1px;
+}
+*/
+
+#contador {
+    background: #000;
+    color: #fff;
+    padding: 14px 26px;
+    border-radius: 10px;
+
+    font-size: 34px;
+    font-weight: 700;
+
+    min-width: 180px;
+
+    display: flex;              /* 👈 CLAVE */
+    align-items: center;        /* 👈 centra vertical */
+    justify-content: center;    /* 👈 centra horizontal */
+
+    letter-spacing: 1px;
+
+    font-family: "Courier New", monospace;
+    font-variant-numeric: tabular-nums;
 }
 
 
