@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://timepucp.site/sitemap.xml
+
+# Crawl-delay to be respectful
+Crawl-delay: 1
