@@ -5,6 +5,7 @@ const horaInicioInput = document.getElementById("horaInicio");
 const horaFinInput = document.getElementById("horaFin");
 const horaActualEl = document.getElementById("horaActual");
 const contadorEl = document.getElementById("contador");
+const contadorSoloEl = document.getElementById("contadorSolo");
 const barraEl = document.getElementById("barraProgreso");
 const barraContainer = document.querySelector(".barra-container");
 
@@ -13,6 +14,7 @@ const cursoInput = document.getElementById("curso");
 const evaluacionInput = document.getElementById("evaluacion");
 const profesorInput = document.getElementById("profesor");
 const aulaInput = document.getElementById("aula");
+const claveCursoInput = document.getElementById("claveCurso");
 const fechaInput = document.getElementById("fecha");
 const fechaTexto = document.getElementById("fechaTexto");
 
@@ -20,6 +22,10 @@ const fechaTexto = document.getElementById("fechaTexto");
 const btnFullscreen = document.getElementById("btnFullscreen");
 const btnDarkMode = document.getElementById("btnDarkMode");
 const btnReset = document.getElementById("btnReset");
+const btnSoloReloj = document.getElementById("btnSoloReloj");
+const btnSalirSoloReloj = document.getElementById("btnSalirSoloReloj");
+const modalFin = document.getElementById("modalFin");
+const btnCerrarModal = document.getElementById("btnCerrarModal");
 
 // =========================
 // VARIABLES GLOBALES
@@ -64,9 +70,11 @@ function iniciarCuentaRegresiva() {
 
     if (!horaInicioInput.value || !horaFinInput.value) {
         contadorEl.textContent = "00:00:00";
+        contadorSoloEl.textContent = "00:00:00";
         barraEl.style.width = "0%";
         barraContainer.setAttribute("aria-valuenow", "0");
-        contadorEl.classList.remove("warning", "tiempo-critico");
+        contadorEl.classList.remove("warning", "tiempo-critico", "en-espera");
+        contadorSoloEl.classList.remove("warning", "tiempo-critico", "en-espera");
         return;
     }
 
@@ -91,54 +99,106 @@ function iniciarCuentaRegresiva() {
 
     intervaloCuenta = setInterval(() => {
         const ahora = new Date();
+        const antesDeInicio = inicio - ahora;
         const restante = fin - ahora;
+
+        // === FASE DE ESPERA: aún no ha llegado la hora de inicio ===
+        if (antesDeInicio > 0) {
+            // Mostrar la duración total de la evaluación (no cuenta regresiva)
+            const durTotal = tiempoTotal;
+            const hD = Math.floor(durTotal / 3600000);
+            const mD = Math.floor((durTotal % 3600000) / 60000);
+            const sD = Math.floor((durTotal % 60000) / 1000);
+            const durStr = `${String(hD).padStart(2,"0")}:${String(mD).padStart(2,"0")}:${String(sD).padStart(2,"0")}`;
+
+            contadorEl.textContent = durStr;
+            contadorSoloEl.textContent = durStr;
+            contadorEl.classList.add("en-espera");
+            contadorSoloEl.classList.add("en-espera");
+            contadorEl.classList.remove("warning", "tiempo-critico");
+            contadorSoloEl.classList.remove("warning", "tiempo-critico");
+            barraEl.style.width = "0%";
+            barraContainer.setAttribute("aria-valuenow", "0");
+            actualizarColorBarra(0);
+            return;
+        }
+
+        // === FASE ACTIVA: ya pasó la hora de inicio ===
+        contadorEl.classList.remove("en-espera");
+        contadorSoloEl.classList.remove("en-espera");
 
         if (restante <= 0) {
             contadorEl.textContent = "00:00:00";
+            contadorSoloEl.textContent = "00:00:00";
             barraEl.style.width = "100%";
             barraContainer.setAttribute("aria-valuenow", "100");
             contadorEl.classList.remove("warning");
             contadorEl.classList.add("tiempo-critico");
+            contadorSoloEl.classList.remove("warning");
+            contadorSoloEl.classList.add("tiempo-critico");
             clearInterval(intervaloCuenta);
+            modalFin.classList.add("visible");
+            reproducirAlerta();
             return;
         }
 
-        // Calcular tiempo
+        // Calcular tiempo restante
         const horas = Math.floor(restante / 3600000);
         const minutos = Math.floor((restante % 3600000) / 60000);
         const segundos = Math.floor((restante % 60000) / 1000);
 
-        // Formatear con ceros a la izquierda
         const horasStr = String(horas).padStart(2, "0");
         const minutosStr = String(minutos).padStart(2, "0");
         const segundosStr = String(segundos).padStart(2, "0");
 
         contadorEl.textContent = `${horasStr}:${minutosStr}:${segundosStr}`;
+        contadorSoloEl.textContent = `${horasStr}:${minutosStr}:${segundosStr}`;
 
         // Advertencia visual cuando quedan menos de 5 minutos
         if (restante <= 300000 && !contadorEl.classList.contains("warning")) {
             contadorEl.classList.add("warning");
+            contadorSoloEl.classList.add("warning");
         } else if (restante > 300000) {
             contadorEl.classList.remove("warning");
+            contadorSoloEl.classList.remove("warning");
         }
 
         // Advertencia crítica cuando quedan menos de 1 minuto
         if (restante <= 60000) {
             contadorEl.classList.add("tiempo-critico");
+            contadorSoloEl.classList.add("tiempo-critico");
         } else {
             contadorEl.classList.remove("tiempo-critico");
+            contadorSoloEl.classList.remove("tiempo-critico");
         }
 
         // Actualizar barra de progreso
         const progreso = Math.min(((tiempoTotal - restante) / tiempoTotal) * 100, 100);
         barraEl.style.width = `${progreso.toFixed(2)}%`;
         barraContainer.setAttribute("aria-valuenow", Math.round(progreso));
+        actualizarColorBarra(progreso);
 
         ultimoTiempoRestante = restante;
     }, 1000);
 
     // Guardar configuración
     guardarDatos();
+}
+
+// =========================
+// COLOR DINÁMICO DE BARRA
+// =========================
+function actualizarColorBarra(progreso) {
+    barraEl.classList.remove('fase-verde', 'fase-amarillo', 'fase-naranja', 'fase-rojo');
+    if (progreso < 60) {
+        barraEl.classList.add('fase-verde');
+    } else if (progreso < 80) {
+        barraEl.classList.add('fase-amarillo');
+    } else if (progreso < 93) {
+        barraEl.classList.add('fase-naranja');
+    } else {
+        barraEl.classList.add('fase-rojo');
+    }
 }
 
 // =========================
@@ -215,6 +275,83 @@ btnDarkMode.addEventListener("click", () => {
 });
 
 // =========================
+// MODO SOLO RELOJ
+// =========================
+function activarSoloReloj() {
+    document.body.classList.add("solo-reloj");
+}
+
+function salirSoloReloj() {
+    document.body.classList.remove("solo-reloj");
+}
+
+btnSoloReloj.addEventListener("click", activarSoloReloj);
+btnSalirSoloReloj.addEventListener("click", salirSoloReloj);
+
+// =========================
+// MODAL FIN DE EVALUACIÓN
+// =========================
+function cerrarModal() {
+    modalFin.classList.remove("visible");
+}
+
+function reproducirAlerta() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // Piano Fin: tres acordes descendentes con timbre de piano
+        const tocarAcorde = (frecuencias, tiempoInicio) => {
+            frecuencias.forEach(freq => {
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                // Forma de onda tipo piano (armónicos naturales)
+                const real = new Float32Array([0, 1, 0.5, 0.25, 0.1, 0.05]);
+                const imag = new Float32Array(real.length);
+                const wave = ctx.createPeriodicWave(real, imag);
+                osc.setPeriodicWave(wave);
+                osc.frequency.value = freq;
+
+                const t0 = ctx.currentTime + tiempoInicio;
+                gain.gain.setValueAtTime(0, t0);
+                gain.gain.linearRampToValueAtTime(0.25, t0 + 0.02);
+                gain.gain.exponentialRampToValueAtTime(0.001, t0 + 1.2);
+
+                osc.start(t0);
+                osc.stop(t0 + 1.4);
+            });
+        };
+
+        // Tres acordes descendentes (Do mayor → Si menor → La menor)
+        tocarAcorde([523.25, 659.25, 783.99], 0.0);
+        tocarAcorde([493.88, 622.25, 739.99], 0.55);
+        tocarAcorde([440.00, 554.37, 659.25], 1.1);
+
+        // Segunda repetición tras una pausa
+        setTimeout(() => {
+            try {
+                tocarAcorde([523.25, 659.25, 783.99], 0.0);
+                tocarAcorde([493.88, 622.25, 739.99], 0.55);
+                tocarAcorde([440.00, 554.37, 659.25], 1.1);
+            } catch(e) {}
+        }, 2400);
+
+    } catch (e) {
+        console.warn("Audio no disponible:", e);
+    }
+}
+
+btnCerrarModal.addEventListener("click", cerrarModal);
+
+// Click fuera del modal para cerrar
+modalFin.addEventListener("click", (e) => {
+    if (e.target === modalFin) cerrarModal();
+});
+
+// Escape también cierra el modal
+// =========================
 // BOTÓN RESET
 // =========================
 btnReset.addEventListener("click", () => {
@@ -222,16 +359,20 @@ btnReset.addEventListener("click", () => {
         // Limpiar inputs
         horaInicioInput.value = "";
         horaFinInput.value = "";
+        horaInicioInput.removeAttribute("value");
+        horaFinInput.removeAttribute("value");
         cursoInput.value = "";
         evaluacionInput.value = "";
         profesorInput.value = "";
         aulaInput.value = "";
+        claveCursoInput.value = "";
         fechaInput.value = "";
         fechaTexto.value = "";
         
         // Reiniciar contador
         clearInterval(intervaloCuenta);
         contadorEl.textContent = "00:00:00";
+        contadorSoloEl.textContent = "00:00:00";
         barraEl.style.width = "0%";
         barraContainer.setAttribute("aria-valuenow", "0");
         contadorEl.classList.remove("warning", "tiempo-critico");
@@ -254,6 +395,7 @@ function guardarDatos() {
         evaluacion: evaluacionInput.value,
         profesor: profesorInput.value,
         aula: aulaInput.value,
+        claveCurso: claveCursoInput.value,
         fecha: fechaInput.value,
         fechaTexto: fechaTexto.value
     };
@@ -262,33 +404,13 @@ function guardarDatos() {
 }
 
 function cargarDatosGuardados() {
-    const datosGuardados = localStorage.getItem("timepucp_data");
-    
-    if (datosGuardados) {
-        try {
-            const datos = JSON.parse(datosGuardados);
-            
-            horaInicioInput.value = datos.horaInicio || "";
-            horaFinInput.value = datos.horaFin || "";
-            cursoInput.value = datos.curso || "";
-            evaluacionInput.value = datos.evaluacion || "";
-            profesorInput.value = datos.profesor || "";
-            aulaInput.value = datos.aula || "";
-            fechaInput.value = datos.fecha || "";
-            fechaTexto.value = datos.fechaTexto || "";
-            
-            // Si hay horas configuradas, iniciar el contador
-            if (datos.horaInicio && datos.horaFin) {
-                iniciarCuentaRegresiva();
-            }
-        } catch (error) {
-            console.error("Error al cargar datos guardados:", error);
-        }
-    }
+    // Cada vez que se abre la página, se borra todo y se empieza desde cero.
+    localStorage.removeItem("timepucp_data");
+    localStorage.removeItem("darkMode");
 }
 
 // Guardar datos automáticamente al cambiar
-[cursoInput, evaluacionInput, profesorInput, aulaInput].forEach(input => {
+[cursoInput, evaluacionInput, profesorInput, aulaInput, claveCursoInput].forEach(input => {
     input.addEventListener("change", guardarDatos);
     input.addEventListener("blur", guardarDatos);
 });
@@ -296,8 +418,23 @@ function cargarDatosGuardados() {
 // =========================
 // EVENT LISTENERS
 // =========================
-horaInicioInput.addEventListener("change", iniciarCuentaRegresiva);
-horaFinInput.addEventListener("change", iniciarCuentaRegresiva);
+
+// Abrir el picker al hacer click en cualquier parte del input de hora
+horaInicioInput.addEventListener("click", () => {
+    horaInicioInput.showPicker?.();
+});
+horaFinInput.addEventListener("click", () => {
+    horaFinInput.showPicker?.();
+});
+
+horaInicioInput.addEventListener("change", () => {
+    horaInicioInput.setAttribute("value", horaInicioInput.value);
+    iniciarCuentaRegresiva();
+});
+horaFinInput.addEventListener("change", () => {
+    horaFinInput.setAttribute("value", horaFinInput.value);
+    iniciarCuentaRegresiva();
+});
 
 // =========================
 // ATAJOS DE TECLADO
@@ -319,6 +456,12 @@ document.addEventListener("keydown", (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === "r") {
         e.preventDefault();
         btnReset.click();
+    }
+
+    // Escape para salir del modo solo reloj o cerrar modal
+    if (e.key === "Escape") {
+        if (modalFin.classList.contains("visible")) cerrarModal();
+        else if (document.body.classList.contains("solo-reloj")) salirSoloReloj();
     }
 });
 
