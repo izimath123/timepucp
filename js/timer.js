@@ -37,6 +37,7 @@ let ultimoTiempoRestante = 0;
 let alertaSonora = null;
 let toastTimeout = null;
 let ultimaConfigTrack = null;
+let ultimoLatidoTrack = 0;
 
 // =========================
 // ANALÍTICA (GA4)
@@ -111,6 +112,7 @@ function iniciarCuentaRegresiva() {
         fin.setDate(fin.getDate() + 1);
     }
 
+    ultimoLatidoTrack = Date.now();
     tiempoTotal = fin - inicio;
     // Evita contar como "completado" un rango que ya estaba vencido al configurarlo
     const finFuturoAlConfigurar = (fin - ahora) > 0;
@@ -203,6 +205,13 @@ function iniciarCuentaRegresiva() {
         actualizarColorBarra(progreso);
 
         ultimoTiempoRestante = restante;
+
+        // Analítica: "latido" cada 60 s mientras corre el tiempo, para que GA4
+        // siga contando el salón como usuario activo aunque nadie interactúe.
+        if (Date.now() - ultimoLatidoTrack >= 60000) {
+            ultimoLatidoTrack = Date.now();
+            track("timer_heartbeat");
+        }
     }, 1000);
 
     // Guardar configuración
