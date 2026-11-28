@@ -15,6 +15,7 @@ const cursoInput = document.getElementById("curso");
 const evaluacionInput = document.getElementById("evaluacion");
 const profesorInput = document.getElementById("profesor");
 const aulaInput = document.getElementById("aula");
+const aulaSalonInput = document.getElementById("aulaSalon");
 const claveCursoInput = document.getElementById("claveCurso");
 const fechaInput = document.getElementById("fecha");
 const fechaTexto = document.getElementById("fechaTexto");
@@ -411,6 +412,7 @@ btnReset.addEventListener("click", () => {
         evaluacionInput.value = "";
         profesorInput.value = "";
         aulaInput.value = "";
+        aulaSalonInput.value = "";
         claveCursoInput.value = "";
         fechaInput.value = "";
         fechaTexto.value = "";
@@ -446,6 +448,7 @@ function guardarDatos() {
         evaluacion: evaluacionInput.value,
         profesor: profesorInput.value,
         aula: aulaInput.value,
+        aulaSalon: aulaSalonInput.value,
         claveCurso: claveCursoInput.value,
         fecha: fechaInput.value,
         fechaTexto: fechaTexto.value
@@ -461,7 +464,7 @@ function cargarDatosGuardados() {
 }
 
 // Guardar datos automáticamente al cambiar
-[cursoInput, evaluacionInput, profesorInput, aulaInput, claveCursoInput].forEach(input => {
+[cursoInput, evaluacionInput, profesorInput, aulaInput, aulaSalonInput, claveCursoInput].forEach(input => {
     input.addEventListener("change", guardarDatos);
     input.addEventListener("blur", guardarDatos);
 });
